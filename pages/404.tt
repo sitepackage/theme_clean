@@ -1,0 +1,12 @@
+<div class="page">
+  <div class="heading">
+    <h1 class="topic1">[% 'The page cannot be found' | loc %]</h1>
+    <span class="widgets"></span>
+    <div class="clear"></div>
+  </div>
+  <div class="padding">
+    <p>[% 'The page you were looking for does not exist.' | loc %]</p>
+    <br />
+    <p>[% 'Go back to our homepage' | loc | link_to shop.uri %]
+  </div>
+</div>

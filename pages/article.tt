@@ -1,0 +1,11 @@
+<div id="article" class="page">
+  <div class="heading">
+    <h1 class="topic1">[% article.name %]</h1>
+    <span class="widgets"></span>
+    <div class="clear"></div>
+  </div>
+  <div class="padding">
+    <div class="author">[% 'Posted by' | loc %] [% article.author %], [% article.published_at | date ('%c') %]</div>
+    [% article.content %]
+  </div>
+</div>

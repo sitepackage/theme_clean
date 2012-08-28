@@ -1,0 +1,290 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+[%- include 'meta.tt' %]
+[%- if settings.favicon_image_uri %]
+<link rel="shortcut icon" type="image/x-icon" href="[% settings.favicon_image_uri %]" />
+[%- end %]
+[% body_bg = 'body_bg.png' | asset_uri  %]
+[% 'style.css' | asset_uri | stylesheet_tag %]
+[% 'jquery/fancybox/2/jquery.fancybox.css' | global_asset_uri | stylesheet_tag %]
+[% 'jquery/markitup/markdown/style.css' | global_asset_uri | stylesheet_tag %]
+[% 'jquery/jquery.min.js' | global_asset_uri | script_tag %]
+[% 'jquery/fancybox/2/jquery.fancybox.pack.js' | global_asset_uri | script_tag %]
+[% 'jquery/jquery.bxslider.min.js' | global_asset_uri | script_tag %]
+[% content_for_header %]
+</head>
+<body style="background:url('[% settings.body_bg_uri || body_bg %]')  [%- if !settings.body_bg_uri %]#e6e6e6[%- end %]  [% settings.body_bg_repeat || "repeat-x" %]  top center;">
+  <script type="text/javascript" charset="utf-8">
+    $j = jQuery.noConflict();
+    // fancybox
+    $j(document).ready(function() {
+      $j(".fancybox a").fancybox();
+    });
+  </script>
+<div id="outer_wrapper" class="search_bar">
+  <div id="header_wrapper">
+    <div id="header">
+
+      <div class="logo_wrapper">
+        <a href="[% shop.uri %]">
+          [%- if settings.logo_image_uri %]
+          <span class="logo" style="background-image: url('[% settings.logo_image_uri %]')"></span>
+          [%- else %]
+          <span class="site_name">[% shop.name | html %]</span>
+          <span class="site_slogan">[% shop.domain %]</span>
+          [%- end %]
+        </a>
+      </div>
+
+      <div class="account_wrapper">
+        [%- if !settings.form_login %]        
+        <div class="account">
+            [%- unless customer.is_logged_in %]
+            <form action="[% uri_for('/customer/login', { 'to' => req.uri }) %]" method="post" name="login">
+              <fieldset>
+                <label for="login">[% 'Email' | loc %]:</label> <input type="text" class="text small_curved" name="login" id="login" />
+                <label for="password">[% 'Password' | loc %]:</label> <input type="password" class="text small_curved" name="password" id="password" />
+                <input type="submit" class="small_curved button" name="submit" value="[% 'login' | loc %]" />
+              </fieldset>
+            </form>
+            [%- else %]
+            <ul>
+              <li><h2>[% customer.name | html %]</h2></li>
+              [%- foreach link in customer.links %]
+              <li>[% link.name | html | link_to (link.uri) %]</li>
+              [%- end %]
+            </ul>
+            [%- end %]
+        </div>
+        [%- end %]
+        <div class="search_wrapper search_bar">
+          <div class="search">
+            <form action="[% uri_for('/collection/all') %]" method="get" name="search" id="search">
+              <fieldset>
+                <input type="text" class="text" name="q" />
+                <input type="submit" class="button" value="&nbsp;" />
+              </fieldset>
+            </form>
+          </div>
+          [%- if  !settings.ecommerce_enabled %]  
+          <div class="cart_status">
+            <a href="[% uri_for('/cart') %]" title="[% 'Shopping Cart' | loc %]">
+              <span><strong>[% cart.total_quantity || 0 %]</strong> [% cart.total_quantity | pluralize ('item', 'items') | loc %]<br />[% 'in shopping cart' | loc %]</span>
+            </a>
+          </div>
+          [%- end %]          
+          <div class="clear"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="nav">
+      <ul>
+        [%- foreach link in linklists.main_menu.links %]
+        [%- link.name = link.name | html %]
+        <li>[%  link.name | link_to (link.uri, link.name, link.target) %]</li>
+        [%- end %]
+      </ul>
+      <div class="social">
+        [%- if settings.facebook_uri || settings.twitter_uri %]
+        [% '<span class="icons fb"></span>' | link_to (settings.facebook_uri, settings.facebook_uri, '_blank') if settings.facebook_uri %]
+        [% '<span class="icons tw"></span>' | link_to (settings.twitter_uri, settings.twitter_uri, '_blank') if settings.twitter_uri %]
+        <div class="clear"></div>
+        [%- end %]
+      </div>
+      <div class="clear"></div>
+    </div>
+
+    <div class="highlight_wrapper">
+      <div class="highlight">
+          <ul id="highlight">
+          [%- if linklists.${settings.linklist_highlight}.links.size || linklists.highlight.links.size %]
+          [%- links = linklists.${settings.linklist_highlight}.links || linklists.highlight.links %]
+          [%- foreach link in links %]
+          [% next if !link.featured_image %]                  
+            <li>
+              <a href="[% link.uri %]" title="[% link.name | html %]">
+                <span style="background-image: url('[% link.featured_image.src | image_uri %]')"></span>
+              </a>
+            </li>
+            [%- end %]
+            [%- else %]                  
+            <li><span style="background-image: url('[% 'highlight_sample.png' | asset_uri %]')"></span></li>
+            <li><span style="background-image: url('[% 'highlight_sample.png' | asset_uri %]')"></span></li>
+            [%- end %]
+          </ul>
+          <script type="text/javascript" charset="utf-8">
+          $j(function(){
+            var slider = $j('#highlight').bxSlider({
+              controls: false,
+              displaySlideQty: 1,
+              moveSlideQty: 1,
+              pager: true,
+              auto: true,
+              pause: 6000
+            });
+          });
+          </script>
+      </div>
+      <div id="sidebar2">
+        <div class="sidebar">
+          [% unless customer.is_logged_in %]
+          [% '<span class="sidebar widgets signup"></span>' | link_to ('/customer/signup') %]
+          [%- else %]
+          [% '<span class="sidebar widgets my_account"></span>' | link_to ('/customer') %]
+          [%- end %]
+          <a href="[% settings.contact_uri || uri_for('/page/contact') %]"><span class="widgets contact"></span></a>
+          <a href="[% settings.notify_payment_uri || uri_for('/discussion/general') %]"><span class="widgets notify_payment"></span></a>
+          <a href="[% settings.how_to_buy_uri || uri_for('/page/how-to-buy') %]"><span class="widgets how_to_buy"></span></a>
+          <div class="clear"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="content_wrapper">
+    <div class="content">
+
+      <div id="sidebar1">
+         <div id="nav-left">
+            [%- if linklists.${settings.linklist_sidebar1}.links.size  %]
+            <div class="sidebar collection nav-left">
+              <h2 class="topic2 widgets" title="[%- linklists.${settings.linklist_sidebar1}.name %]"><span>[%- linklists.${settings.linklist_sidebar1}.name %]</span></h2>
+              <ul class="list">
+                [%- foreach link in linklists.${settings.linklist_sidebar1}.links %]
+                <li >[% link.name | html | link_to (link.uri, link.name) %]</li>
+                [%- end %]
+              </ul>
+            </div>
+            [%- end %]
+            [%- if linklists.${settings.linklist_sidebar2}.links.size %]
+            <div class="sidebar collection nav-left">
+              <h2 class="topic2 widgets" title="[%- linklists.${settings.linklist_sidebar2}.name %]"><span>[%- linklists.${settings.linklist_sidebar2}.name %]</span></h2>
+              <ul class="list">
+                [%- foreach link in linklists.${settings.linklist_sidebar2}.links %]
+                <li >[% link.name | html | link_to (link.uri, link.name) %]</li>
+                [%- end %]
+              </ul>
+            </div>
+            [%- end %]
+            [%- if linklists.${settings.linklist_sidebar3}.links.size %]
+            <div class="sidebar collection nav-left">
+              <h2 class="topic2 widgets" title="[%- linklists.${settings.linklist_sidebar3}.name %]"><span>[%- linklists.${settings.linklist_sidebar3}.name %]</span></h2>
+              <ul class="list">
+                [%- foreach link in linklists.${settings.linklist_sidebar3}.links %]
+                <li >[% link.name | html | link_to (link.uri, link.name) %]</li>
+                [%- end %]
+              </ul>
+            </div>
+            [%- end %]
+
+            [%- if !settings.collection_enabled %]
+            <div class="sidebar collection nav-left">
+              <h2 class="topic2 widgets" title="[% 'Browse by Collection' | loc %]"><span>Collection</span></h2>
+                [%- if linklists.collections.links %]
+                <ul>
+                  [%- foreach link in linklists.collections.links %]
+                  <li>[% link.name | html | link_to (link.uri, link.name) %]</li>
+                  [%- end %]
+                </ul>
+                [%- else %]
+                <p>คุณต้องเพิ่มคอลเลคชันสินค้าเข้าลิงค์ลิสต์แฮนเดิล "collections"</p>
+                [%- end %]
+            </div>
+            [%- end %]
+            
+            [%- if settings.brand_style && collection.handle && collection.handle != 'all' %]
+            <div class="sidebar brand nav-left">
+              <h2 class="topic2 widgets" title="[% 'Browse by Brand' | loc %]"><span>[% 'Browse by Brand' | loc %]</span></h2>
+                [%- if !settings.brand_style || settings.brand_style == 1 %]
+                <form action="[% req.url %]" method="get">
+                  <select name="brand" class="select" onchange='location.href=this.form.brand.options[this.form.brand.selectedIndex].value;'>
+                    <option value="[% collection.uri %]">- [% 'Any brand' | loc %] -</option>
+                    [%- foreach vendor in collection.vendors %]
+                      <option value="[% uri_for ('/collection', collection.slug, {vendor = vendor}) %]" [% 'selected="selected"' if current_vendor == vendor %]>[% vendor | html %]</option>
+                    [%- end %]
+                  </select>
+                </form>
+                [%- else %]
+                <ul class="list">
+                  [%- foreach vendor in collection.vendors %]
+                    <li [% 'class="active"' if current_vendor == vendor %]>[% vendor | html | link_to uri_for ('/collection', collection.slug, {vendor = vendor}) %]</li>
+                  [%- end %]
+                </ul>
+                [%- end %]
+            </div>
+            [%- end %]
+            
+          [%- if settings.type_style && collection.handle && collection.handle != 'all' %]
+          <div class="sidebar type nav-left">
+            <h2 class="topic2 widgets" title="[% 'Browse by Type' | loc %]"><span>[% 'Browse by Type' | loc %]</span></h2>
+              [%- if !settings.type_style || settings.type_style == 1 %]
+              <form action="[% req.url %]" method="get">
+                <select name="type" class="select" onchange='location.href=this.form.type.options[this.form.type.selectedIndex].value;'>
+                  <option value="[% collection.uri %]">- [% 'Any type' | loc %] -</option>
+                  [%- foreach type in collection.types %]
+                    <option value="[% uri_for ('/collection', collection.slug, {type = type}) %]" [% 'selected="selected"' if current_type == type %]>[% type | html %]</option>
+                  [%- end %]
+                </select>
+              </form>
+              [%- else %]
+              <ul class="list">
+                [%- foreach type in collection.types %]
+                  <li [% 'class="active"' if current_type == type %]>[% type | html | link_to uri_for ('/collection', collection.slug, {type = type}) %]</li>
+                [%- end %]
+              </ul>
+              [%- end %]
+          </div>  
+          [%- end %]
+          </div>
+
+        [%- if settings.facebook_uri && settings.like_box_enabled %]
+        <div class="sidebar facebook_like_box">
+          <iframe src="http://www.facebook.com/plugins/likebox.php?href=[% settings.facebook_uri | uri %]&amp;width=200&amp;colorscheme=light&amp;show_faces=[% settings.like_box_show_faces ? 'true' : 'false' %]&amp;stream=[% settings.like_box_show_stream ? 'true' : 'false' %]&amp;header=[% settings.like_box_show_header ? 'true' : 'false' %]&amp;height=[% settings.like_box_height ? settings.like_box_height : '556' %]" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:200px; height:[% settings.like_box_height ? settings.like_box_height : '556' %]px;"></iframe>
+        </div>
+        [%- end %]
+
+        <div class="sidebar">
+          [%- if linklists.sidebar.links.size %]
+          <ul class="banners">
+            [%- foreach link in linklists.sidebar.links %]
+            <li>[% link.featured_image.src | image_uri | image_tag | link_to (link.uri, link.name, link.target) %]</li>
+            [%- end %]
+          </ul>
+          [%- end %]
+        </div>
+
+      </div>
+
+      <div id="main">
+        [% content %]
+      </div>
+
+      <div class="clear"></div>
+    </div>
+  </div>
+
+  <div id="footer_wrapper">
+    <div id="footer">
+      <div class="footer c">
+        <div class="nav">
+          [%- foreach link in linklists.footer.links %]
+          [%- link.name = link.name | html %]
+          [% link.name | link_to (link.uri, link.name, link.target) %]
+          [% '|' unless loop.last %]
+          [%- end %]
+        </div>
+        <div class="copyright">
+          &copy; [% now | date ('%Y') %] [% shop.name | html %]. [% powered_by_link %].
+        </div>
+      </div>
+    </div>
+  </div>
+
+  [% content_for_footer %]
+</div>
+</body>
+</html>
