@@ -340,9 +340,9 @@ form .hint_area {
 #header .logo_wrapper {
     width: 317px;
     float: left;
-    margin: 20px 0 0 35px;
+    margin: 10px 0 0 35px;
     overflow: hidden;
-    height: 90px;
+    height: 110px;
 }
 #header .logo_wrapper span {
     display: block;
@@ -350,12 +350,12 @@ form .hint_area {
 #header .logo_wrapper .logo {
     background-repeat: no-repeat;
     background-position: left center;
-    height: 90px;
+    height: 110px;
 }
 #header .site_name {
     font-size: 2.5em;
     color: #cb4440;
-    margin: 10px 0 5px 0;
+    margin: 20px 0 5px 0;
     line-height: 1em;
 }
 #header .site_slogan {
@@ -928,6 +928,7 @@ form .hint_area {
 }
 #product .image {
 	float: left;
+  width:242px;
 }
 #product .details {
 	float: right;
@@ -978,6 +979,7 @@ form .hint_area {
     height: 240px;
     background: #fff no-repeat center center;
     border:1px solid #eaeaea;
+    margin:0 0 20px 0;
     display: block;
 }
 #product .all{
@@ -1032,6 +1034,7 @@ form .hint_area {
 	font-weight:bold;
 }
 #product .extra_images {
+  width:242px;
 	padding: 0 0 10px 0;
 }
 #product .extra_images ul {
@@ -1047,8 +1050,11 @@ form .hint_area {
 	width:50px;
 	height:50px;
 	background: #fff no-repeat center center;
-    margin: 5px 10px 5px 0;
+    margin: 0px 11px 10px 0;
     border: 1px solid #eaeaea;
+}
+#product .extra_images .last div {
+    margin: 0px 0px 10px 0;
 }
 #product .buy {
     float: left;

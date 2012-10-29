@@ -247,15 +247,17 @@
         </div>
         [%- end %]
 
-        <div class="sidebar">
-          [%- if linklists.sidebar.links.size %]
-          <ul class="banners">
-            [%- foreach link in linklists.sidebar.links %]
-            <li>[% link.featured_image.src | image_uri | image_tag | link_to (link.uri, link.name, link.target) %]</li>
+          <div class="sidebar">         
+            [%- if linklists.${settings.linklist_banner}.links.size %]
+            [%- links = linklists.${settings.linklist_banner}.links %]
+              [%- foreach link in links %]
+                <ul class="banners">
+                [%- link.name = link.name | html %]
+                <li>[% link.featured_image.src | image_uri | image_tag | link_to (link.uri, link.name, link.target) %]</li>
+                </ul>
+              [%- end %]               
             [%- end %]
-          </ul>
-          [%- end %]
-        </div>
+          </div>          
 
       </div>
 
